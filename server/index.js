@@ -4,7 +4,7 @@ const express = require('express');
 const logger = require('./logger');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
-const {graphiqlExpress, graphqlExpress } = require('apollo-server-express');
+const { graphiqlExpress, graphqlExpress } = require('apollo-server-express');
 const { makeExecutableSchema } = require('graphql-tools');
 
 const argv = require('./argv');
@@ -16,23 +16,21 @@ const resolve = require('path').resolve;
 const app = express();
 
 // Add Backend(GraphQL)
-mongoose.connect('mongodb://jammanbo:jammanbo18@ds253840.mlab.com:53840/worklife').then(
-    () => console.log('connect')
-)
+mongoose.connect('mongodb://jammanbo:jammanbo18@ds253840.mlab.com:53840/worklife');
 
-const datas = [
-    {title: '진창규바보', author: '김준수'},
-    {title: '진창규개바보', author: '진창규'},
-    {title: '진창규핵바보', author: '최민식'},
-    {title: '진창규10바보', author: '이창민'},
-    {title: '진창규완전바보', author: '김수진'},
-]
+// const datas = [
+//     { title: '진창규바보', author: '김준수' },
+//     { title: '진창규개바보', author: '진창규' },
+//     { title: '진창규핵바보', author: '최민식' },
+//     { title: '진창규10바보', author: '이창민' },
+//     { title: '진창규완전바보', author: '김수진' },
+// ];
 
 
-const Book = mongoose.model("book", {
-    _id: 'String',
-    title:'String',
-    author:'String'
+const Book = mongoose.model('book', {
+        _id: 'String',
+        title: 'String',
+        author: 'String',
 });
 
 // datas.forEach((book) => {
@@ -52,21 +50,19 @@ const typeDefs = `
 
 const resolvers = {
     Query: {
-        books: (parent, args, context) => {
-            return context.book.find();
-        }
+        books: (parent, args, context) => context.book.find(),
     },
     Book: {
-        id(parent, args) {
+        id(parent) {
             return parent._id;
         },
-        title(parent, args) {
+        title(parent) {
             return parent.title;
         },
-        author(parent, args) {
+        author(parent) {
             return parent.author;
-        }
-    }
+        },
+    },
 };
 
 
@@ -76,7 +72,7 @@ const schema = makeExecutableSchema({
 });
 
 
-app.use('/graphql', bodyParser.json(), graphqlExpress({ schema, context: {book: Book} }));
+app.use('/graphql', bodyParser.json(), graphqlExpress({ schema, context: { book: Book } }));
 app.get('/graphiql', graphiqlExpress({ endpointURL: '/graphql' }));
 
 
